@@ -24,7 +24,7 @@ type ConsumeRequest struct {
 }
 
 type ConsumeResponse struct {
-	Record Record `jsone:"record"`
+	Record Record `json:"record"`
 }
 
 func NewHTTPServer(addr string) *http.Server {
