@@ -28,15 +28,20 @@ type ConsumeResponse struct {
 }
 
 func NewHTTPServer(addr string) *http.Server {
+
+	return &http.Server{
+		Addr:    addr,
+		Handler: routes(),
+	}
+}
+
+func routes() http.Handler {
 	httpsrv := newHTTPServer()
 	r := mux.NewRouter()
 	r.HandleFunc("/", httpsrv.handleProduce).Methods("POST")
 	r.HandleFunc("/", httpsrv.handleConsume).Methods("GET")
 
-	return &http.Server{
-		Addr:    addr,
-		Handler: r,
-	}
+	return r
 }
 
 func newHTTPServer() *httpServer {
