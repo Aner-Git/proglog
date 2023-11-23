@@ -15,10 +15,12 @@ const (
 	lenWidth = 8
 )
 
+// The file se store records in
 type store struct {
 	*os.File
 	sync.Mutex
-	buf  *bufio.Writer
+	buf *bufio.Writer
+	//size of the file store(also the position to Append new record)
 	size uint64
 }
 
@@ -36,7 +38,8 @@ func newStore(f *os.File) (*store, error) {
 	}, nil
 }
 
-//Append -- persist the given bytes to the store
+// Append -- persist the given bytes to the store
+// we write a record which is the size of the data and the data: [len(data),data]
 func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
 	s.Lock()
 	defer s.Unlock()
