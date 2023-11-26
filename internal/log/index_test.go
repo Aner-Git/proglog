@@ -12,7 +12,7 @@ func TestIndex(t *testing.T) {
 	c := Config{}
 	c.Segment.MaxIndexBytes = 1024
 
-	f, err := os.CreateTemp("", "index_read_test")
+	f, err := os.CreateTemp("", "index_test")
 	require.NoError(t, err)
 	defer os.Remove(f.Name())
 	index, err := newIndex(f, c)
