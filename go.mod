@@ -1,4 +1,4 @@
-module github.com/Aner-Git
+module github.com/Aner-Git/proglog
 
 go 1.20
 

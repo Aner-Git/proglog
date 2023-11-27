@@ -6,7 +6,6 @@ import (
 	"path"
 
 	api "github.com/Aner-Git/proglog/api/v1"
-	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -73,7 +72,7 @@ func (s *segment) Append(record *api.Record) (offset uint64, err error) {
 		//index offset are relative to the base offset
 		uint32(s.nextOffset-uint64(s.baseOffset)),
 		pos); err != nil {
-		return 0, nil
+		return 0, err
 	}
 
 	s.nextOffset++
@@ -93,4 +92,35 @@ func (s *segment) Read(off uint64) (*api.Record, error) {
 	record := &api.Record{}
 	err = proto.Unmarshal(p, record)
 	return record, nil
+}
+
+func (s *segment) IsMaxed() bool {
+	return s.store.size >= s.config.Segment.MaxStoreBytes ||
+		s.index.size >= s.config.Segment.MaxIndexBytes
+}
+
+func (s *segment) Remove() error {
+
+	if err := s.Close(); err != nil {
+		return err
+	}
+	if err := os.Remove(s.index.Name()); err != nil {
+		return err
+	}
+	return os.Remove(s.store.Name())
+}
+
+func (s *segment) Close() error {
+	if err := s.index.Close(); err != nil {
+		return err
+	}
+
+	return s.store.Close()
+}
+
+func nearestMultiple(j, k uint64) uint64 {
+	if j >= 0 {
+		return (j / k) * k
+	}
+	return ((j - k + 1) / k) * k
 }
